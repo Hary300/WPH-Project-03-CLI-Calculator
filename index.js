@@ -1,136 +1,177 @@
 'use strict';
-// 1. install prompt-sync dulu di terminal dengan perintah: npm install prompt-sync
-
-// 2. Untuk aktifin input prompt di Node.js (tanpa ini bisa error di console)
 const prompt = require('prompt-sync')();
 
-// 3. Membuat fungsi untuk meminta input angka dari user dan memastikan angkanya valid
-
-function getValidNumberInput(pesan) {
+function getValidNumberInput(promptMessage) {
   while (true) {
-    // Membuat perintah "Masukan angka...." terus ditanyakan ketika angkanya tidak valid dan akan berhenti sampai angkanya valid
+    const firstInput = prompt(promptMessage).trim();
+    if (firstInput === '') {
+      console.log('');
+      console.log('⚠️');
+      console.log('<=== Input cannot be empty ===>');
+      console.log('⚠️');
+      console.log('');
+      continue;
+    }
 
-    const input = prompt(pesan); // Pesan yang akan ditampilkan di prompt
-    const angka = Number(input); // Mengubah input yang berupa string menjadi angka
-
-    // Mengecek apakah input adalah angka yang valid
-    if (!isNaN(angka)) {
-      return angka; // Jika input valid, kembalikan angka tersebut
+    const firstNumber = Number(firstInput);
+    if (!Number.isFinite(firstNumber)) {
+      console.log('');
+      console.log('⚠️');
+      console.log('<=== Input is not valid. Only number ===>');
+      console.log('⚠️');
+      console.log('');
     } else {
-      console.log('Hanya angka.');
+      return firstNumber;
     }
   }
 }
 
-// 4. Membuat fungsi untuk mevalidasi math operasi yang akan digunakan  (penjumlahan, pengurangan, perkalian, dan pembagian)/validasi operasi matematika
-function getValidMathOperation() {
+function getValidOperatorInput(promptMessage) {
   while (true) {
-    const operasi = prompt('Masukkan operasi matematika: ');
+    console.log('Operator (+, -, *, /, %, **)');
+    const operator = prompt(promptMessage).trim();
     if (
-      operasi === '+' ||
-      operasi === '-' ||
-      operasi === '*' ||
-      operasi === '/' ||
-      operasi === '%' ||
-      operasi === '**'
+      operator === '+' ||
+      operator === '-' ||
+      operator === '*' ||
+      operator === '/' ||
+      operator === '%' ||
+      operator === '**'
     ) {
-      return operasi; // Jika operasi valid, kembalikan operasi tersebut
-    } else {
-      console.log('Operasi matematika tidak valid.');
+      return operator;
     }
+    console.log('');
+    console.log('⚠️');
+    console.log('<=== Operator is not valid  ===>');
+    console.log('⚠️');
+    console.log('');
   }
 }
-
-// 5. Membuat fungsi operasi arithmatika dasar
 
 function add(a, b) {
   return a + b;
 }
+
 function subtract(a, b) {
   return a - b;
 }
+
 function multiply(a, b) {
   return a * b;
 }
+
 function divide(a, b) {
-  if (b === 0) {
-    return 'Error!! Pembagian 0 tidak diperbolehkan!';
-  }
   return a / b;
 }
+
 function modulo(a, b) {
   return a % b;
 }
+
 function power(a, b) {
   return a ** b;
 }
 
-// 6. pengaplikasian fungsi
 while (true) {
-  // Untuk check
-  const angka1 = getValidNumberInput('Masukkan angka pertama: ');
-  const operasi = getValidMathOperation();
-  const angka2 = getValidNumberInput('Masukkan angka kedua: ');
+  let validFirstNumber = getValidNumberInput('Input The First Number : ');
+  let validOperator = getValidOperatorInput('Input Operator: ');
+  let validSecondNumber;
 
-  let hasil;
+  if (validOperator === '/') {
+    while (true) {
+      let secondNumber = getValidNumberInput('Input The Second Number : ');
+      if (secondNumber !== 0) {
+        validSecondNumber = secondNumber;
+        break;
+      }
+      console.log('');
+      console.log('⚠️');
+      console.log('<=== Error: Division by zero! ===>');
+      console.log('⚠️');
+      console.log('');
+    }
+  } else {
+    validSecondNumber = getValidNumberInput('Input The Second Number : ');
+  }
 
-  switch (operasi) {
+  let result;
+  switch (validOperator) {
     case '+':
-      hasil = add(angka1, angka2);
+      result = add(validFirstNumber, validSecondNumber);
       break;
     case '-':
-      hasil = subtract(angka1, angka2);
+      result = subtract(validFirstNumber, validSecondNumber);
       break;
     case '*':
-      hasil = multiply(angka1, angka2);
+      result = multiply(validFirstNumber, validSecondNumber);
       break;
     case '/':
-      hasil = divide(angka1, angka2);
+      result = divide(validFirstNumber, validSecondNumber);
       break;
     case '%':
-      hasil = modulo(angka1, angka2);
+      result = modulo(validFirstNumber, validSecondNumber);
       break;
     case '**':
-      hasil = power(angka1, angka2);
+      result = power(validFirstNumber, validSecondNumber);
       break;
   }
 
-  if (typeof hasil === 'number') {
-    console.log(`Hasil: ${angka1} ${operasi} ${angka2} = ${hasil}`);
+  console.log(
+    'Calculation: ' +
+      validFirstNumber +
+      ' ' +
+      validOperator +
+      ' ' +
+      validSecondNumber
+  );
+  console.log('The result: ' + result);
 
-    if (hasil > 0) {
-      console.log('Hasil adalah bilangan positif');
-    } else if (hasil < 0) {
-      console.log('Hasil adalah bilangan negatif');
+  if (!Number.isFinite(result)) {
+    console.log('=========');
+    console.log('NOTES');
+    console.log('No notes');
+    console.log('=========');
+  } else {
+    console.log('=========');
+    console.log('NOTES');
+
+    if (result < 0) {
+      console.log('1. ' + result + ' is negative');
+    } else if (result > 0) {
+      console.log('1. ' + result + ' is positive');
     } else {
-      console.log('Hasil adalah nol');
+      console.log('1. ' + result + ' is zero');
     }
 
-    if (Number.isInteger(hasil)) {
-      console.log('Bilangan bulat');
+    if (Number.isInteger(result)) {
+      console.log('2. ' + result + ' is integer');
+      result % 2 === 0
+        ? console.log('3. ' + result + ' is even')
+        : console.log('3. ' + result + ' is odd');
     } else {
-      console.log('Bilangan desimal');
+      console.log('2. ' + result + ' is floating-point');
+      console.log('3. Cannot determine even/odd');
     }
-    // ternary operator
-    console.log(hasil % 2 === 0 ? 'Genap' : 'Ganjil');
-  } else if (typeof hasil === 'string') {
-    console.log('Terjadi kesalahan: ' + hasil);
+
+    console.log('=========');
   }
 
-  let lanjut;
-
+  let again;
   while (true) {
-    lanjut = prompt('Hitung lagi? (y/n): ').toLowerCase();
-
-    if (lanjut === 'y' || lanjut === 'n') {
-      break; // keluar dari loop kalau input valid
+    const confirm = prompt('You want more count (y/n)?').trim().toUpperCase();
+    if (confirm === 'Y' || confirm === 'N') {
+      again = confirm;
+      break;
+    } else {
+      console.log('');
+      console.log('⚠️');
+      console.log('<=== Invalid keyword!! ===>');
+      console.log('⚠️');
+      console.log('');
     }
-
-    console.log("Masukkan hanya 'y' atau 'n'!");
   }
-
-  if (lanjut !== 'y') {
-    console.log('Terima kasih!');
+  if (again === 'N') {
+    console.log('Thank you');
     break;
   }
 }
